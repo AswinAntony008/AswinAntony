@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aswin Antony G — Python Full-Stack Developer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #10141A;
+    --bg-alt: #0B0E13;
+    --surface: #1A2029;
+    --surface-2: #212831;
+    --line: #2C333E;
+    --text: #E8E6E0;
+    --text-dim: #8B93A1;
+    --green: #3EA872;
+    --green-dim: #2A5F45;
+    --amber: #E8A33D;
+    --red-dot: #E5544D;
+    --yellow-dot: #E8B84D;
+    --green-dot: #3EA872;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:'Inter', sans-serif;
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  ::selection{background:var(--green-dim); color:#fff;}
+
+  h1,h2,h3, .display{font-family:'Space Grotesk', sans-serif;}
+  code, .mono, .tag, .tab, .prompt, .meta, nav a, .btn{font-family:'JetBrains Mono', monospace;}
+
+  a{color:inherit; text-decoration:none;}
+
+  /* ---------- top chrome bar (mimics editor window) ---------- */
+  .chrome{
+    position:sticky; top:0; z-index:100;
+    background:var(--bg-alt);
+    border-bottom:1px solid var(--line);
+  }
+  .chrome-top{
+    display:flex; align-items:center; gap:16px;
+    padding:10px 20px;
+    border-bottom:1px solid var(--line);
+  }
+  .dots{display:flex; gap:7px;}
+  .dot{width:11px; height:11px; border-radius:50%;}
+  .dot.red{background:var(--red-dot);}
+  .dot.yellow{background:var(--yellow-dot);}
+  .dot.green{background:var(--green-dot);}
+  .chrome-title{color:var(--text-dim); font-size:12.5px; letter-spacing:.02em;}
+
+  .tabs{
+    display:flex; overflow-x:auto; scrollbar-width:none;
+  }
+  .tabs::-webkit-scrollbar{display:none;}
+  .tab{
+    padding:12px 20px;
+    font-size:12.5px;
+    color:var(--text-dim);
+    border-right:1px solid var(--line);
+    white-space:nowrap;
+    cursor:pointer;
+    transition:color .2s, background .2s;
+    display:flex; align-items:center; gap:8px;
+  }
+  .tab:hover{color:var(--text); background:var(--surface);}
+  .tab .dot-small{width:6px; height:6px; border-radius:50%; background:var(--green); opacity:0;}
+  .tab.active{color:var(--text); background:var(--surface); box-shadow: inset 0 -2px 0 var(--green);}
+  .tab.active .dot-small{opacity:1;}
+
+  section{
+    max-width:920px;
+    margin:0 auto;
+    padding:90px 24px 40px;
+    border-bottom:1px solid var(--line);
+    scroll-margin-top:96px;
+  }
+  section:last-of-type{border-bottom:none;}
+
+  .line-no{
+    color:#3A414D;
+    font-family:'JetBrains Mono', monospace;
+    font-size:12px;
+    display:inline-block;
+    width:28px;
+    user-select:none;
+  }
+
+  /* ---------- HERO ---------- */
+  #hero{padding-top:64px;}
+  .hero-grid{
+    display:grid;
+    grid-template-columns:1.3fr 0.9fr;
+    gap:48px;
+    align-items:center;
+  }
+  .prompt{color:var(--green); font-size:13px;}
+  .prompt .cmd{color:var(--text);}
+  .typed-line{margin-bottom:6px;}
+  h1.name{
+    font-size:clamp(34px, 5vw, 54px);
+    font-weight:700;
+    line-height:1.08;
+    margin:18px 0 6px;
+  }
+  .role-line{
+    font-size:17px;
+    color:var(--amber);
+    font-family:'JetBrains Mono', monospace;
+    margin-bottom:18px;
+  }
+  .role-line .cursor{
+    display:inline-block; width:8px; height:16px; background:var(--amber);
+    margin-left:2px; vertical-align:-2px;
+    animation:blink 1s steps(1) infinite;
+  }
+  @keyframes blink{50%{opacity:0;}}
+  .summary{color:var(--text-dim); max-width:52ch; margin-bottom:26px; font-size:15px;}
+  .hero-actions{display:flex; gap:12px; flex-wrap:wrap;}
+  .btn{
+    display:inline-flex; align-items:center; gap:8px;
+    padding:10px 18px;
+    border-radius:6px;
+    font-size:12.5px;
+    border:1px solid var(--line);
+    color:var(--text);
+    transition:border-color .2s, background .2s, transform .15s;
+  }
+  .btn:hover{border-color:var(--green); background:var(--surface); transform:translateY(-1px);}
+  .btn.primary{background:var(--green-dim); border-color:var(--green); color:#EFFBF4;}
+  .btn.primary:hover{background:var(--green);}
+
+  .avatar-stage{
+    justify-self:center;
+    perspective:900px;
+  }
+  .avatar-frame{
+    width:220px; height:220px;
+    border-radius:50%;
+    background: conic-gradient(from 180deg, var(--green), var(--amber), var(--green));
+    padding:4px;
+    position:relative;
+    transform-style:preserve-3d;
+    transform:rotateX(0deg) rotateY(0deg);
+    transition:transform .12s ease-out;
+    box-shadow:0 30px 60px -20px rgba(0,0,0,.55), 0 0 0 1px rgba(62,168,114,.08);
+    animation:float-idle 6s ease-in-out infinite;
+  }
+  @keyframes float-idle{
+    0%, 100%{transform:translateY(0) rotateX(0deg) rotateY(0deg);}
+    50%{transform:translateY(-8px) rotateX(2deg) rotateY(-2deg);}
+  }
+  .avatar-inner{
+    width:100%; height:100%; border-radius:50%;
+    background:var(--surface);
+    display:flex; align-items:center; justify-content:center;
+    overflow:hidden;
+    border:3px solid var(--bg-alt);
+    transform:translateZ(18px);
+  }
+  .avatar-inner svg{width:62%; height:62%;}
+  .avatar-tag{
+    position:absolute; bottom:8px; left:50%; transform:translateX(-50%) translateZ(30px);
+    background:var(--bg-alt); border:1px solid var(--line);
+    padding:4px 10px; border-radius:20px; font-size:10.5px; color:var(--green);
+    white-space:nowrap;
+  }
+
+  /* ---------- section headers ---------- */
+  .sec-head{display:flex; align-items:baseline; gap:12px; margin-bottom:30px;}
+  .sec-head .file{color:var(--text-dim); font-size:12.5px;}
+  .sec-head h2{font-size:26px; font-weight:600;}
+  .sec-head .rule{flex:1; height:1px; background:var(--line);}
+
+  /* ---------- ABOUT ---------- */
+  .about-body{color:var(--text-dim); max-width:70ch; font-size:15px;}
+  .about-body b{color:var(--text); font-weight:600;}
+
+  /* ---------- SKILLS ---------- */
+  .code-block{
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:8px;
+    padding:22px 26px;
+    font-size:13.5px;
+    overflow-x:auto;
+  }
+  .code-block .k{color:#79B8FF;}
+  .code-block .s{color:var(--amber);}
+  .code-block .c{color:#6B7280;}
+  .skill-tags{display:flex; flex-wrap:wrap; gap:9px; margin-top:22px;}
+  .tag{
+    font-size:11.5px;
+    padding:6px 12px;
+    border-radius:5px;
+    background:var(--surface-2);
+    border:1px solid var(--line);
+    color:var(--text-dim);
+  }
+  .tag.hl{border-color:var(--green); color:var(--green);}
+
+  /* ---------- EXPERIENCE (git log style) ---------- */
+  .commit{
+    display:grid;
+    grid-template-columns:88px 1fr;
+    gap:20px;
+    padding:22px 0;
+    border-bottom:1px dashed var(--line);
+  }
+  .commit:last-child{border-bottom:none;}
+  .commit-hash{color:var(--green); font-size:12.5px; font-family:'JetBrains Mono', monospace;}
+  .commit-date{color:var(--text-dim); font-size:11px; margin-top:4px;}
+  .commit-title{font-weight:600; font-size:16px; margin-bottom:2px;}
+  .commit-org{color:var(--amber); font-size:12.5px; margin-bottom:10px; font-family:'JetBrains Mono', monospace;}
+  .commit ul{color:var(--text-dim); font-size:14px; padding-left:18px;}
+  .commit li{margin-bottom:6px;}
+
+  /* ---------- PROJECTS ---------- */
+  .proj-grid{display:grid; grid-template-columns:repeat(auto-fit, minmax(270px,1fr)); gap:18px; perspective:1000px;}
+  .proj-card{
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:20px;
+    display:flex; flex-direction:column; gap:12px;
+    transform-style:preserve-3d;
+    transform:rotateX(0deg) rotateY(0deg) translateZ(0);
+    transition:border-color .2s, transform .15s ease-out, box-shadow .15s ease-out;
+    position:relative;
+    will-change:transform;
+  }
+  .proj-card:hover{border-color:var(--green); box-shadow:0 24px 40px -18px rgba(0,0,0,.5);}
+  .proj-card > *{transform:translateZ(24px);}
+  .proj-card::before{
+    content:"";
+    position:absolute; inset:0; border-radius:10px;
+    background:radial-gradient(circle at var(--mx,50%) var(--my,50%), rgba(62,168,114,.14), transparent 60%);
+    opacity:0; transition:opacity .2s;
+    pointer-events:none;
+  }
+  .proj-card:hover::before{opacity:1;}
+  .proj-cmd{color:var(--text-dim); font-size:11px;}
+  .proj-cmd span{color:var(--green);}
+  .proj-title{font-size:16.5px; font-weight:600;}
+  .proj-desc{color:var(--text-dim); font-size:13.5px; flex:1;}
+  .proj-stack{display:flex; flex-wrap:wrap; gap:6px;}
+  .proj-stack span{
+    font-size:10px; padding:3px 8px; border-radius:4px;
+    background:var(--surface-2); color:var(--text-dim);
+  }
+  .proj-link{
+    font-size:12px; color:var(--green); display:inline-flex; align-items:center; gap:6px;
+    margin-top:4px;
+  }
+  .proj-link:hover{text-decoration:underline;}
+  .proj-card.soon{opacity:.6;}
+  .badge-soon{font-size:10px; color:var(--text-dim); border:1px dashed var(--line); padding:2px 8px; border-radius:4px; align-self:flex-start;}
+
+  /* ---------- EDUCATION (import trace) ---------- */
+  .import-line{
+    font-family:'JetBrains Mono', monospace;
+    font-size:13.5px;
+    padding:10px 0;
+    border-bottom:1px solid var(--line);
+    display:flex; justify-content:space-between; gap:16px; flex-wrap:wrap;
+  }
+  .import-line:last-child{border-bottom:none;}
+  .import-line .from{color:var(--text-dim);}
+  .import-line .yr{color:var(--amber); font-size:12px;}
+  .import-line .current{color:var(--green);}
+
+  /* ---------- CERTS + LANG ---------- */
+  .pill-row{display:flex; flex-wrap:wrap; gap:10px;}
+  .pill{
+    border:1px solid var(--line); background:var(--surface);
+    padding:9px 16px; border-radius:6px; font-size:13px; color:var(--text-dim);
+  }
+  .pill b{color:var(--text);}
+
+  /* ---------- CONTACT / FOOTER ---------- */
+  #contact{text-align:center; padding-bottom:70px;}
+  .contact-prompt{font-size:15px; color:var(--text-dim); margin-bottom:26px;}
+  .contact-links{display:flex; justify-content:center; gap:14px; flex-wrap:wrap;}
+  footer{
+    text-align:center; padding:26px; color:var(--text-dim); font-size:11.5px;
+    font-family:'JetBrains Mono', monospace; border-top:1px solid var(--line);
+  }
+
+  @media (max-width:760px){
+    .hero-grid{grid-template-columns:1fr; text-align:left;}
+    .avatar-frame{justify-self:start;}
+    section{padding:64px 18px 30px;}
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .role-line .cursor{animation:none;}
+    html{scroll-behavior:auto;}
+  }
+</style>
+</head>
+<body>
+
+<div class="chrome">
+  <div class="chrome-top">
+    <div class="dots"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span></div>
+    <span class="chrome-title">aswin_antony_g — portfolio — zsh</span>
+  </div>
+  <nav class="tabs">
+    <a href="#hero" class="tab active" data-tab><span class="dot-small"></span>hero.py</a>
+    <a href="#about" class="tab" data-tab><span class="dot-small"></span>about.py</a>
+    <a href="#skills" class="tab" data-tab><span class="dot-small"></span>skills.json</a>
+    <a href="#experience" class="tab" data-tab><span class="dot-small"></span>experience.log</a>
+    <a href="#projects" class="tab" data-tab><span class="dot-small"></span>projects/</a>
+    <a href="#education" class="tab" data-tab><span class="dot-small"></span>education.py</a>
+    <a href="#contact" class="tab" data-tab><span class="dot-small"></span>contact.sh</a>
+  </nav>
+</div>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-grid">
+    <div>
+      <div class="prompt typed-line">visitor@web:~$ <span class="cmd">whoami</span></div>
+      <h1 class="name">Aswin Antony G</h1>
+      <div class="role-line">Python Full-Stack Developer<span class="cursor"></span></div>
+      <p class="summary">Building with Django and REST APIs, styling it clean with Bootstrap, and — thanks to a year in SEO — making sure people actually find what gets shipped. Based in Attoor, Kanyakumari.</p>
+      <div class="hero-actions">
+        <a class="btn primary" href="mailto:aswinantony584@gmail.com">✉ Email me</a>
+        <a class="btn" href="https://github.com/AswinAntony008" target="_blank" rel="noopener">⌥ GitHub</a>
+        <a class="btn" href="https://www.linkedin.com/in/aswin-antony-035203294" target="_blank" rel="noopener">in LinkedIn</a>
+        <a class="btn" href="#projects">↓ View projects</a>
+      </div>
+    </div>
+    <div class="avatar-stage">
+      <div class="avatar-frame" id="avatarFrame">
+        <div class="avatar-inner">
+          <img src="photo2.png" alt="Aswin Antony" style="width:100%; height:100%; object-fit:cover;">
+        </div>
+        <div class="avatar-tag">● available for hire</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="sec-head"><span class="file">about.py</span><h2>Summary</h2><div class="rule"></div></div>
+  <p class="about-body">
+    <b>Python Full Stack Developer</b> skilled in Django, REST APIs, and responsive web development. Currently pursuing an <b>M.E. in Computer Science and Engineering</b> at <b>Maria College of Engineering and Technology</b>, while working as an <b>SEO Executive at MC Graphics</b> — a combination that means I don't just build the product, I think about whether anyone can find it. Earlier, as a Web Developer Intern at MTL Technologies, I shipped Django applications with authentication modules and responsive interfaces end to end.
+  </p>
+</section>
+
+<!-- SKILLS -->
+<section id="skills">
+  <div class="sec-head"><span class="file">skills.json</span><h2>Technical Skills</h2><div class="rule"></div></div>
+  <div class="code-block">
+<span class="c">// core stack</span><br>
+{<br>
+&nbsp;&nbsp;<span class="k">"languages"</span>: [<span class="s">"Python"</span>, <span class="s">"JavaScript"</span>, <span class="s">"SQL"</span>, <span class="s">"HTML"</span>, <span class="s">"CSS"</span>],<br>
+&nbsp;&nbsp;<span class="k">"frameworks"</span>: [<span class="s">"Django"</span>, <span class="s">"Django REST Framework"</span>, <span class="s">"Bootstrap"</span>, <span class="s">"jQuery"</span>],<br>
+&nbsp;&nbsp;<span class="k">"database"</span>: [<span class="s">"MySQL"</span>],<br>
+&nbsp;&nbsp;<span class="k">"cms"</span>: [<span class="s">"WordPress"</span>],<br>
+&nbsp;&nbsp;<span class="k">"seo"</span>: [<span class="s">"On-Page"</span>, <span class="s">"Off-Page"</span>, <span class="s">"Keyword Research"</span>, <span class="s">"Meta Optimization"</span>, <span class="s">"Search Console"</span>],<br>
+&nbsp;&nbsp;<span class="k">"tools"</span>: [<span class="s">"Git"</span>, <span class="s">"VS Code"</span>, <span class="s">"REST API"</span>]<br>
+}
+  </div>
+  <div class="skill-tags">
+    <span class="tag hl">Python</span><span class="tag hl">Django</span><span class="tag hl">DRF</span>
+    <span class="tag">MySQL</span><span class="tag">JavaScript</span><span class="tag">Bootstrap</span>
+    <span class="tag">jQuery</span><span class="tag">WordPress</span><span class="tag">SEO</span>
+    <span class="tag">Git</span><span class="tag">REST API</span>
+  </div>
+</section>
+
+<!-- EXPERIENCE -->
+<section id="experience">
+  <div class="sec-head"><span class="file">experience.log</span><h2>Experience</h2><div class="rule"></div></div>
+
+  <div class="commit">
+    <div><div class="commit-hash">#a1e92f</div><div class="commit-date">Jun 2025 —<br>Apr 2026</div></div>
+    <div>
+      <div class="commit-title">SEO Executive</div>
+      <div class="commit-org">MC Graphics</div>
+      <ul>
+        <li>Ran On-Page and Off-Page SEO end to end using WordPress CMS.</li>
+        <li>Optimized meta tags, headings, internal links, and image alt attributes for ranking.</li>
+        <li>Built and managed backlinks through guest posting, directories, and social bookmarking.</li>
+        <li>Conducted keyword research and content optimization to grow organic visibility.</li>
+        <li>Worked alongside content, design, and dev teams to keep the site structure SEO-friendly.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="commit">
+    <div><div class="commit-hash">#7c40b1</div><div class="commit-date">Jul 2024 —<br>Jan 2025</div></div>
+    <div>
+      <div class="commit-title">Web Developer Intern</div>
+      <div class="commit-org">MTL Technologies</div>
+      <ul>
+        <li>Developed and deployed Django web applications with user-authentication modules.</li>
+        <li>Designed and implemented responsive UI with Bootstrap and JavaScript.</li>
+        <li>Collaborated in a developer team to optimize project workflow and delivery.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- PROJECTS -->
+<section id="projects">
+  <div class="sec-head"><span class="file">projects/</span><h2>Projects</h2><div class="rule"></div></div>
+  <div class="proj-grid">
+
+    <div class="proj-card">
+      <div class="proj-cmd"><span>$</span> git clone freshmart.git</div>
+      <div class="proj-title">FreshMart</div>
+      <div class="proj-desc">A grocery e-commerce web app with product listings, cart, and order flow, built on Django with a MySQL backend.</div>
+      <div class="proj-stack"><span>Django</span><span>MySQL</span><span>Bootstrap</span></div>
+      <a class="proj-link" href="https://github.com/AswinAntony008/FreshMart" target="_blank" rel="noopener">↗ View code</a>
+    </div>
+
+    <div class="proj-card">
+      <div class="proj-cmd"><span>$</span> git clone trendyfit-fashion.git</div>
+      <div class="proj-title">TrendyFit Fashion</div>
+      <div class="proj-desc">A fashion e-commerce storefront with category browsing and a responsive, mobile-first shopping experience.</div>
+      <div class="proj-stack"><span>Django</span><span>JavaScript</span><span>Bootstrap</span></div>
+      <a class="proj-link" href="https://github.com/AswinAntony008/trendyfit-fashion" target="_blank" rel="noopener">↗ View code</a>
+    </div>
+
+    <div class="proj-card">
+      <div class="proj-cmd"><span>$</span> git clone e-food.git</div>
+      <div class="proj-title">E-Food</div>
+      <div class="proj-desc">An online food ordering app covering menu management, cart, and order placement for a restaurant-style workflow.</div>
+      <div class="proj-stack"><span>Django</span><span>MySQL</span><span>REST API</span></div>
+      <a class="proj-link" href="https://github.com/AswinAntony008/E-Food" target="_blank" rel="noopener">↗ View code</a>
+    </div>
+
+    <div class="proj-card">
+      <div class="proj-cmd"><span>$</span> git clone chinese-restaurant.git</div>
+      <div class="proj-title">Chinese Restaurant</div>
+      <div class="proj-desc">A responsive multi-page restaurant website with CRUD-based menu management, built with Django and MySQL.</div>
+      <div class="proj-stack"><span>Django</span><span>MySQL</span><span>Bootstrap</span></div>
+      <a class="proj-link" href="https://github.com/AswinAntony008/Chinese-Resturant" target="_blank" rel="noopener">↗ View code</a>
+    </div>
+
+    <div class="proj-card">
+      <div class="proj-cmd"><span>$</span> git clone resume-analyzer-ai.git</div>
+      <div class="proj-title">AI Resume Analyzer</div>
+      <div class="proj-desc">Evaluates resumes against job descriptions using NLP-based keyword matching, with resume parsing, scoring, and skill-gap analysis to speed up candidate screening.</div>
+      <div class="proj-stack"><span>Django</span><span>NLP</span><span>Python</span></div>
+      <a class="proj-link" href="https://github.com/AswinAntony008/AswinAntony008-resume-analyzer-ai" target="_blank" rel="noopener">↗ View code</a>
+    </div>
+
+    <div class="proj-card">
+      <div class="proj-cmd"><span>$</span> git clone gym-management.git</div>
+      <div class="proj-title">Gym Management</div>
+      <div class="proj-desc">A management system for handling gym members, plans, and schedules with a structured admin workflow.</div>
+      <div class="proj-stack"><span>Django</span><span>MySQL</span></div>
+      <a class="proj-link" href="https://github.com/AswinAntony008/Gym-Management" target="_blank" rel="noopener">↗ View code</a>
+    </div>
+
+    <div class="proj-card">
+      <div class="proj-cmd"><span>$</span> git clone expense-trackers.git</div>
+      <div class="proj-title">Expense Tracker</div>
+      <div class="proj-desc">A personal finance tool for logging expenses, tracking spending by category, and reviewing totals over time.</div>
+      <div class="proj-stack"><span>Python</span><span>Django</span></div>
+      <a class="proj-link" href="https://github.com/AswinAntony008/expensetrackers" target="_blank" rel="noopener">↗ View code</a>
+    </div>
+
+    <div class="proj-card">
+      <div class="proj-cmd"><span>$</span> git clone nexoradigitals.git</div>
+      <div class="proj-title">Nexora Digitals</div>
+      <div class="proj-desc">A digital agency-style site tying together web presence and SEO fundamentals — the same on-page and off-page techniques used at MC Graphics.</div>
+      <div class="proj-stack"><span>WordPress</span><span>SEO</span><span>Bootstrap</span></div>
+      <a class="proj-link" href="https://github.com/AswinAntony008/Nexoradigitals" target="_blank" rel="noopener">↗ View code</a>
+    </div>
+
+    <div class="proj-card">
+      <div class="proj-cmd"><span>$</span> git clone portfolio.git</div>
+      <div class="proj-title">Personal Portfolio</div>
+      <div class="proj-desc">Source for this portfolio site — the repo this very page was built from.</div>
+      <div class="proj-stack"><span>HTML</span><span>CSS</span><span>JavaScript</span></div>
+      <a class="proj-link" href="https://github.com/AswinAntony008/AswinAntonyportfolio" target="_blank" rel="noopener">↗ View code</a>
+    </div>
+
+    <div class="proj-card soon">
+      <div class="proj-cmd"><span>$</span> git clone image-caption-generator.git</div>
+      <div class="proj-title">AI Image Caption Generator</div>
+      <div class="proj-desc">Upload an image, get an accurate caption back — built with Django and Hugging Face Transformers through a responsive, interactive interface.</div>
+      <div class="proj-stack"><span>Django</span><span>Hugging Face</span><span>Python</span></div>
+      <span class="badge-soon">repo link coming soon</span>
+    </div>
+
+  </div>
+</section>
+
+<!-- EDUCATION -->
+<section id="education">
+  <div class="sec-head"><span class="file">education.py</span><h2>Education & Certifications</h2><div class="rule"></div></div>
+
+  <div class="import-line">
+    <span><span class="current">from</span> "Maria College of Engineering and Technology" <span class="current">import</span> M.E_ComputerScienceEngineering</span>
+    <span class="yr">2026 — present · currently pursuing</span>
+  </div>
+  <div class="import-line">
+    <span><span class="from">from</span> "MTL Technologies" import PGP_FullStackDevelopment</span>
+    <span class="yr">2024 — 2025</span>
+  </div>
+  <div class="import-line">
+    <span><span class="from">from</span> "Anna University" import B.E_ComputerScienceEngineering</span>
+    <span class="yr">2020 — 2024</span>
+  </div>
+  <div class="import-line">
+    <span><span class="from">from</span> "Tamil Nadu State Board" import HSC</span>
+    <span class="yr">2020</span>
+  </div>
+  <div class="import-line">
+    <span><span class="from">from</span> "Tamil Nadu State Board" import SSLC</span>
+    <span class="yr">2018</span>
+  </div>
+
+  <div style="margin-top:28px" class="pill-row">
+    <div class="pill"><b>Certification</b> · Python Full-Stack Web Development — MTL Technologies</div>
+    <div class="pill"><b>Certification</b> · Internship in Python — NextGen Solutions</div>
+  </div>
+  <div style="margin-top:14px" class="pill-row">
+    <div class="pill">English</div><div class="pill">Tamil</div><div class="pill">Malayalam</div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="sec-head"><span class="file">contact.sh</span><h2>Get in touch</h2><div class="rule"></div></div>
+  <p class="contact-prompt">visitor@web:~$ echo "let's build something" | mail aswin</p>
+  <div class="contact-links">
+    <a class="btn primary" href="mailto:aswinantony584@gmail.com">✉ aswinantony584@gmail.com</a>
+    <a class="btn" href="tel:+916369455461">📞 +91 63694 55461</a>
+    <a class="btn" href="https://github.com/AswinAntony008" target="_blank" rel="noopener">⌥ github.com/AswinAntony008</a>
+    <a class="btn" href="https://www.linkedin.com/in/aswin-antony-035203294" target="_blank" rel="noopener">in linkedin.com/in/aswin-antony</a>
+  </div>
+</section>
+
+<footer>Attoor, Kanyakumari — 629177 · Built with Django-flavored curiosity, one commit at a time.</footer>
+
+<script>
+  const tabs = document.querySelectorAll('[data-tab]');
+  const sections = document.querySelectorAll('section');
+  tabs.forEach(tab=>{
+    tab.addEventListener('click', e=>{
+      e.preventDefault();
+      const id = tab.getAttribute('href');
+      document.querySelector(id).scrollIntoView({behavior:'smooth'});
+    });
+  });
+  const observer = new IntersectionObserver((entries)=>{
+    entries.forEach(entry=>{
+      if(entry.isIntersecting){
+        const id = '#' + entry.target.id;
+        tabs.forEach(t=>t.classList.toggle('active', t.getAttribute('href')===id));
+      }
+    });
+  }, {rootMargin: '-40% 0px -55% 0px'});
+  sections.forEach(s=>observer.observe(s));
+
+  /* ---------- 3D interactions ---------- */
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const canHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+
+  if(!reduceMotion && canHover){
+    // hero avatar tilts toward the cursor across the whole hero
+    const hero = document.getElementById('hero');
+    const avatarFrame = document.getElementById('avatarFrame');
+    if(hero && avatarFrame){
+      hero.addEventListener('mousemove', (e)=>{
+        const r = hero.getBoundingClientRect();
+        const px = (e.clientX - r.left) / r.width - 0.5;
+        const py = (e.clientY - r.top) / r.height - 0.5;
+        avatarFrame.style.transform = `rotateX(${(-py*14).toFixed(2)}deg) rotateY(${(px*18).toFixed(2)}deg)`;
+      });
+      hero.addEventListener('mouseleave', ()=>{
+        avatarFrame.style.transform = '';
+      });
+    }
+
+    // project cards tilt independently toward the cursor
+    document.querySelectorAll('.proj-card').forEach(card=>{
+      card.addEventListener('mousemove', (e)=>{
+        const r = card.getBoundingClientRect();
+        const px = (e.clientX - r.left) / r.width;
+        const py = (e.clientY - r.top) / r.height;
+        const rx = (0.5 - py) * 14;
+        const ry = (px - 0.5) * 16;
+        card.style.transform = `rotateX(${rx.toFixed(2)}deg) rotateY(${ry.toFixed(2)}deg) translateZ(0)`;
+        card.style.setProperty('--mx', `${px*100}%`);
+        card.style.setProperty('--my', `${py*100}%`);
+      });
+      card.addEventListener('mouseleave', ()=>{
+        card.style.transform = 'rotateX(0deg) rotateY(0deg) translateZ(0)';
+      });
+    });
+  }
+</script>
+
+</body>
+</html>
